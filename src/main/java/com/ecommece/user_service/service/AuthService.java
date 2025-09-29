@@ -1,6 +1,7 @@
 package com.ecommece.user_service.service;
 
 import com.ecommece.user_service.core.ApiResponse;
+import com.ecommece.user_service.core.UserRole;
 import com.ecommece.user_service.dto.request.LoginRequest;
 import com.ecommece.user_service.dto.request.RegisterRequest;
 import com.ecommece.user_service.dto.response.LoginResponse;
@@ -42,11 +43,12 @@ public class AuthService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserAlredyExistException("Email already in use: " + request.getEmail());
         }
+        UserRole role = request.getRole() != null ? request.getRole() : UserRole.USER;
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role("USER")
+                .role(String.valueOf(role))
                 .build();
 
         User savedUser = userRepository.save(user);
