@@ -18,6 +18,11 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	// Configure the Mockito agent for explicit JVM attachment
+	mockitoAgent {
+		// Use 'transitive' for Groovy DSL
+		transitive = false
+	}
 }
 
 repositories {
@@ -37,6 +42,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// Add mockito-core to the new mockitoAgent configuration
+	mockitoAgent 'org.mockito:mockito-core'
+
 	// Flyway
 	implementation 'org.flywaydb:flyway-core:11.13.2'
 	implementation 'org.flywaydb:flyway-mysql:11.13.2'
@@ -49,4 +57,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Attach the Mockito agent to the JVM when running tests
+	jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}", '-Xshare:off'
 }
